@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.lwjgl:lwjgl-libdivide:3.2.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-libdivide/3.2.1/72545cf6941c5bc1b91ecb729d982d836c6ed15c/lwjgl-libdivide-3.2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-libdivide/3.2.1/80a2839a66e12f54929d511acee8fd7918076ac1/lwjgl-libdivide-3.2.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

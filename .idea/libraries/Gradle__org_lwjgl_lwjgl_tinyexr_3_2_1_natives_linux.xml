@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.lwjgl:lwjgl-tinyexr:3.2.1:natives-linux">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-tinyexr/3.2.1/d1fc9df984bf2175c123dcfd5e2c24d7ffa49764/lwjgl-tinyexr-3.2.1-natives-linux.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-tinyexr/3.2.1/6e33076985d93b5bc461a1745d06af511bac25ab/lwjgl-tinyexr-3.2.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

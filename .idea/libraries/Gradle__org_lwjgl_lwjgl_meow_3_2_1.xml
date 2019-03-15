@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.lwjgl:lwjgl-meow:3.2.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-meow/3.2.1/36e3896360344e283938904a094247611f78bf7e/lwjgl-meow-3.2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-meow/3.2.1/3281c7c006beeacf5bb3a839670a628ed71b3700/lwjgl-meow-3.2.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.lwjgl:lwjgl-remotery:3.2.1:natives-linux">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-remotery/3.2.1/70b5bbb2556e7f88a5d91acc64eeea3efdfec386/lwjgl-remotery-3.2.1-natives-linux.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl-remotery/3.2.1/ba3feb17e14b950654929bdebe26113a3b05ac7c/lwjgl-remotery-3.2.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
