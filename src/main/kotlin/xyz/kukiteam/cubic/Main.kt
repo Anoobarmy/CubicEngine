@@ -14,7 +14,11 @@ import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL11
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.system.MemoryUtil.NULL
+import xyz.kukiteam.cubic.managers.KeyManager
+import xyz.kukiteam.cubic.objects.CallbackParameters
 import java.util.concurrent.TimeUnit
+import java.util.function.Consumer
+import java.util.function.Predicate
 
 
 class Main {
@@ -24,15 +28,22 @@ class Main {
         private var red: Float = 0.0f
         private var green: Float = 0.0f
         private var blue: Float = 0.0f
-        private var alpha: Float = 0.0f
+
         private var change: Float = 0.1f
+
         private var hits: Int = 0
         private var add: Boolean = true
+
+        private val releasePredicate: Predicate<CallbackParameters> = Predicate { p -> p.action == GLFW.GLFW_RELEASE }
+
+        @JvmField
+        val keyManager = KeyManager()
     }
 
     fun run() {
         println("Hello LWJGL " + Version.getVersion() + "!")
 
+        initKeyManager()
         init()
         loop()
 
@@ -44,7 +55,72 @@ class Main {
         GLFW.glfwSetErrorCallback(null)!!.free()
     }
 
+    private fun initKeyManager() {
+        keyManager.add(GLFW.GLFW_KEY_ESCAPE, releasePredicate.and { hits < 3}, Consumer {
+            ++hits
+            println("increased hits")
+            GlobalScope.async {
+                delay(TimeUnit.SECONDS.toMillis(3))
+                println("decreased hits")
+                --hits
+            }
+        }, CallbackParameters(GLFW.GLFW_KEY_ESCAPE, -1, GLFW.GLFW_RELEASE, -1, listOf<Any>(2)))
+
+        keyManager.add(GLFW.GLFW_KEY_TAB, releasePredicate, Consumer {
+            add = !add
+        }, CallbackParameters(GLFW.GLFW_KEY_TAB, -1, GLFW.GLFW_RELEASE, -1))
+
+        keyManager.add(GLFW.GLFW_KEY_R, releasePredicate, Consumer {
+            red = if (add) red + change else red - change
+        }, CallbackParameters(GLFW.GLFW_KEY_R, -1, GLFW.GLFW_RELEASE, -1))
+        keyManager.add(GLFW.GLFW_KEY_G, releasePredicate, Consumer {
+            green = if (add) green + change else green - change
+        }, CallbackParameters(GLFW.GLFW_KEY_G, -1, GLFW.GLFW_RELEASE, -1))
+        keyManager.add(GLFW.GLFW_KEY_B, releasePredicate, Consumer {
+            blue = if (add) blue + change else blue - change
+        }, CallbackParameters(GLFW.GLFW_KEY_B, -1, GLFW.GLFW_RELEASE, -1))
+        keyManager.add(GLFW.GLFW_KEY_C, releasePredicate, Consumer {
+            change = if (add) change + 0.05f else change - 0.05f
+        }, CallbackParameters(GLFW.GLFW_KEY_C, -1, GLFW.GLFW_RELEASE, -1))
+
+        keyManager.add(GLFW.GLFW_KEY_UP, releasePredicate, Consumer {
+            red   += change
+            green += change
+            blue  += change
+        }, CallbackParameters(GLFW.GLFW_KEY_UP, -1, GLFW.GLFW_RELEASE, -1))
+        keyManager.add(GLFW.GLFW_KEY_DOWN, releasePredicate, Consumer {
+            red   -= change
+            green -= change
+            blue  -= change
+        }, CallbackParameters(GLFW.GLFW_KEY_DOWN, -1, GLFW.GLFW_RELEASE, -1))
+
+        keyManager.add(GLFW.GLFW_KEY_U, releasePredicate, Consumer {
+            val manager = keyManager
+            println(keyManager.getBoundEvents(null).size)
+            for (boundEvent in keyManager.getBoundEvents(null)) {
+                keyManager.remove(boundEvent.expectedCallbackParameters.key, boundEvent)
+                println(keyManager.getBoundEvents(null).size)
+            }
+            println("Unbound all keys")
+
+            keyManager.add(GLFW.GLFW_KEY_R, releasePredicate, Consumer {
+                GlobalScope.async {
+                    delay(TimeUnit.SECONDS.toMillis(10))
+                    for (boundEvent in keyManager.getBoundEvents(GLFW.GLFW_KEY_R)) {
+                        keyManager.remove(GLFW.GLFW_KEY_R, boundEvent)
+                    }
+                    initKeyManager()
+                }
+            }, CallbackParameters(GLFW.GLFW_KEY_R, -1, GLFW.GLFW_RELEASE, -1))
+
+        }, CallbackParameters(GLFW.GLFW_KEY_U, -1, GLFW.GLFW_RELEASE, -1))
+
+        println("Bound all keys")
+
+    }
+
     private fun init() {
+
         GLFWErrorCallback.createPrint(System.err).set()
 
         if (!GLFW.glfwInit())
@@ -63,53 +139,12 @@ class Main {
 
         GLFW.glfwSetKeyCallback(window) { window, key, scancode, action, mods ->
 
-            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE && hits < 3) {
-                ++hits
-                println("increased hits")
-                GlobalScope.async {
-                    delay(TimeUnit.SECONDS.toMillis(3))
-                    println("decreased hits")
-                    --hits
-                }
-            }
+            val param = CallbackParameters(key, window, action, mods)
 
-            if (key == GLFW.GLFW_KEY_KP_ADD && action == GLFW.GLFW_RELEASE) {
-                print("changing mode old: $add")
-                add = true
-                println(" new: $add")
-            }
+            if (keyManager.hasEvents(param))
+                keyManager.runEvents(param)
 
-            if (key == GLFW.GLFW_KEY_KP_SUBTRACT && action == GLFW.GLFW_RELEASE) {
-                print("changing mode old: $add")
-                add = false
-                println(" new: $add")
-            }
-
-            if (key == GLFW.GLFW_KEY_R && action == GLFW.GLFW_PRESS) {
-                print("Changing red old: $red")
-                red = if (add) red + change else red - change
-                println(" new: $red")
-            }
-
-            if (key == GLFW.GLFW_KEY_G && action == GLFW.GLFW_PRESS) {
-                print("Changing green old: $green")
-                green = if (add) green + change else green - change
-                println(" new: $green")
-            }
-
-            if (key == GLFW.GLFW_KEY_B && action == GLFW.GLFW_PRESS) {
-                print("Changing blue old: $blue")
-                blue = if (add) blue + change else blue - change
-                println(" new: $blue")
-            }
-
-            if (key == GLFW.GLFW_KEY_A && action == GLFW.GLFW_PRESS) {
-                print("Changing alpha old: $alpha")
-                alpha = if (add) alpha + change else alpha - change
-                println(" new: $alpha")
-            }
-
-            if (hits == 2)
+            if (hits >= 2)
                 GLFW.glfwSetWindowShouldClose(window, true)
         }
 
@@ -145,7 +180,7 @@ class Main {
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while (!glfwWindowShouldClose(window)) {
-            GL11.glClearColor(red, green, blue, alpha)
+            GL11.glClearColor(red, green, blue, 0.0f)
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT or GL11.GL_DEPTH_BUFFER_BIT) // clear the framebuffer
 
             GLFW.glfwSwapBuffers(window) // swap the color buffers
